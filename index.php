@@ -33,7 +33,7 @@
 
 
   <!-- Main Stylesheet File -->
-  <link href="css/style2.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
 
   <!-- =======================================================
     Theme Name: Avilon
