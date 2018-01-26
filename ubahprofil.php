@@ -8,14 +8,14 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 <?php
 session_start();
 include('dbconnect.php');
-$_SESSION['pesan']='SILAHKAN LOGIN';
+$_SESSION['pesan']='Ubah Profil';
 if(isset($_POST['action']))
 {          
     if($_POST['action']=="login")
     {
-        $no_ba = mysqli_real_escape_string($connection,$_POST['no_ba']);
+        $username = mysqli_real_escape_string($connection,$_POST['username']);
         $password = mysqli_real_escape_string($connection,$_POST['password']);
-        $strSQL = mysqli_query($connection,"select no_ba, fullname from users where no_ba='".$no_ba."' and password='".md5($password)."'");
+        $strSQL = mysqli_query($connection,"select username, fullname from users where username='".$username."' and password='".md5($password)."'");
         if (!$strSQL) {
 			printf("Error: %s\n", mysqli_error($connection));
 			exit();
@@ -27,9 +27,9 @@ if(isset($_POST['action']))
 			while($row = mysqli_fetch_assoc($strSQL)) {
 				$fullname = $row['fullname'];
 			}
-            $message = $Results['no_ba']." Login Sucessfully!!";
+            $message = $Results['username']." Login Sucessfully!!";
 			$_SESSION['fullname'] = $fullname;
-			$_SESSION['no_ba'] = $no_ba;
+			$_SESSION['username'] = $username;
 			header("Location:index.php");
 			exit();
         }
@@ -103,76 +103,28 @@ if(isset($_POST['action']))
 				echo $_SESSION['pesan'];
 			?></h2>
 			<form action="#" method="post">
+				
 				<div class="form-sub-w3">
-					<input type="text" name="no_ba" placeholder="Nomor BA " required />
-				<div class="icon-w3">
-					<i class="fa fa-user" aria-hidden="true"></i>
-				</div>
+					<input type="text" name="fullname" placeholder="Nama Lengkap " required />
+					<input type="text" name="jenis_kelamin" placeholder="Jenis Kelamin " required />
+					<input type="text" name="jenis_kelamin" placeholder="Jenis Kelamin " required />
 				</div>
 				<div class="form-sub-w3">
-					<input type="password" name="password" placeholder="Password" required />
-				<div class="icon-w3">
-					<i class="fa fa-unlock-alt" aria-hidden="true"></i>
-				</div>
+					<input type="text" name="password" class="mail" placeholder="Email" required />
+			
 				</div>
 				
 				
 				<div class="submit-w3l">
 					<input name="action" type="hidden" value="login" />
-					<input type="submit" value="Login">
+					<input type="submit" value="Simpan">
 				</div>
-				<p class="p-bottom-w3ls"><a  href="./index.php">Kembali</a></p>
+				<p class="p-bottom-w3ls"><a  href="./profil.php">Batal</a></p>
 			</form>
 		</div>
 <!--//form-ends-here-->
 </div>
-<div id="small-dialog1" class="mfp-hide">
-					<div class="contact-form1">
-										<div class="contact-w3-agileits">
-                                        
-										
 
-										<h3>Daftar</h3>
-											<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
-												<div class="form-sub-w3ls">
-													<input name="username" placeholder="Username"  type="text" required>
-													<div class="icon-agile">
-														<i class="fa fa-user" aria-hidden="true"></i>
-													</div>
-												</div>
-												<div class="form-sub-w3ls">
-													<input name="email" placeholder="Email" class="mail" type="email" required>
-													<div class="icon-agile">
-														<i class="fa fa-envelope-o" aria-hidden="true"></i>
-													</div>
-												</div>
-												<div class="form-sub-w3ls">
-													<input name="fullname" placeholder="Nama Lengkap" type="text" required>
-												</div>
-												<div class="form-sub-w3ls">
-													<input name="password" placeholder="Kata Sandi"  type="password" required>
-													<div class="icon-agile">
-														<i class="fa fa-unlock-alt" aria-hidden="true"></i>
-													</div>
-												</div>
-												<div class="form-sub-w3ls">
-													<input placeholder="Konfirmasi Kata Sandi"  type="password" required>
-													<div class="icon-agile">
-														<i class="fa fa-unlock-alt" aria-hidden="true"></i>
-													</div>
-												</div>
-											</div>
-											<div class="login-check">
-								 			 <label class="checkbox"><input type="checkbox" name="checkbox" checked=""><p>I Accept Terms & Conditions</p></label>
-											</div>
-										<div class="submit-w3l">
-											<input name="action" type="hidden" value="signup" />
-											<input type="submit" value="Daftar" name="btn-signup">
-											
-										</div>
-										</form>
-					</div>	
-				</div>
 <!-- copyright -->
 	
 	<!-- //copyright --> 
