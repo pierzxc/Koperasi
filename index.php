@@ -1,9 +1,15 @@
 <?php
 	session_start();
 	$fullname = '';
+	$role = '';
 	if( isset($_SESSION['fullname'])!="" ){
 	  $fullname = $_SESSION['fullname'];
 	}
+	if( isset($_SESSION['role'])!="" ){
+	  $role = $_SESSION['role'];
+	}
+	
+	 
 ?>
 
 <!DOCTYPE html>
@@ -58,16 +64,31 @@
       </div>
 	
 	<?php
-		if($fullname != '')
-		echo'
-		<nav id="nav-menu-container">
-			<ul class="nav-menu">
-			  <li class="menu-active"><a href="./index.php">Beranda</a></li>
-			  <li><a href="./profil.php">Profil</a></li>
-			  <li><a href="./logout.php">Logout</a></li>
-			</ul>
-		  </nav>
-		';
+		if($fullname != '' && $role == 'anggota')
+		{
+			echo'
+			<nav id="nav-menu-container">
+				<ul class="nav-menu">
+				  <li class="menu-active"><a href="./index.php">Beranda</a></li>
+				  <li><a href="./profil.php">Profil</a></li>
+				  <li><a href="./logout.php">Logout</a></li>
+				</ul>
+			  </nav>
+			';
+		}
+		else if($fullname != '' && $role == 'admin')
+		{
+			echo'
+			<nav id="nav-menu-container">
+				<ul class="nav-menu">
+				  <li class="menu-active"><a href="./index.php">Beranda</a></li>
+				  <li><a href="./tampilanggota.php">Lihat Anggota</a></li>
+				  <li><a href="./tambahanggota.php">Tambah Anggota</a></li>
+				  <li><a href="./logout.php">Logout</a></li>
+				</ul>
+			  </nav>
+			';
+		}
 		else
 		echo'
 		<nav id="nav-menu-container">

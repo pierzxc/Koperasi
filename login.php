@@ -15,21 +15,24 @@ if(isset($_POST['action']))
     {
         $no_ba = mysqli_real_escape_string($connection,$_POST['no_ba']);
         $password = mysqli_real_escape_string($connection,$_POST['password']);
-        $strSQL = mysqli_query($connection,"select no_ba, fullname from users where no_ba='".$no_ba."' and password='".md5($password)."'");
+        $strSQL = mysqli_query($connection,"select role, no_ba, fullname from users where no_ba='".$no_ba."' and password='".md5($password)."'");
         if (!$strSQL) {
 			printf("Error: %s\n", mysqli_error($connection));
 			exit();
 		}
 		//$Results = mysqli_fetch_array($strSQL);
 		$fullname = '';
+		$role = '';
         if(mysqli_num_rows($strSQL) > 0)
         {
 			while($row = mysqli_fetch_assoc($strSQL)) {
 				$fullname = $row['fullname'];
+				$role = $row['role'];
 			}
             $message = $Results['no_ba']." Login Sucessfully!!";
 			$_SESSION['fullname'] = $fullname;
 			$_SESSION['no_ba'] = $no_ba;
+			$_SESSION['role'] = $role;
 			header("Location:index.php");
 			exit();
         }
@@ -104,7 +107,7 @@ if(isset($_POST['action']))
 			?></h2>
 			<form action="#" method="post">
 				<div class="form-sub-w3">
-					<input type="text" name="no_ba" placeholder="Nomor BA " required />
+					<input type="text" name="no_ba" placeholder="User ID / Nomor BA " required />
 				<div class="icon-w3">
 					<i class="fa fa-user" aria-hidden="true"></i>
 				</div>
