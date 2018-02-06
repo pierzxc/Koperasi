@@ -13,9 +13,9 @@ if(isset($_POST['action']))
 {          
     if($_POST['action']=="login")
     {
-        $no_ba = mysqli_real_escape_string($connection,$_POST['no_ba']);
+        $username = mysqli_real_escape_string($connection,$_POST['username']);
         $password = mysqli_real_escape_string($connection,$_POST['password']);
-        $strSQL = mysqli_query($connection,"select role, no_ba, fullname from users where no_ba='".$no_ba."' and password='".md5($password)."' and role='anggota'");
+        $strSQL = mysqli_query($connection,"select role, no_ba, fullname from users where username='".$username."' and password='".md5($password)."' and role='admin'");
         if (!$strSQL) {
 			printf("Error: %s\n", mysqli_error($connection));
 			exit();
@@ -41,31 +41,6 @@ if(isset($_POST['action']))
 			$_SESSION['pesan']='USERNAME ATAU PASSWORD SALAH';
             $message = "Invalid username or password!!";
         }        
-    }
-    elseif($_POST['action']=="signup")
-    {
-        $name       = mysqli_real_escape_string($connection,$_POST['username']);
-        $email      = mysqli_real_escape_string($connection,$_POST['email']);
-        $password   = mysqli_real_escape_string($connection,$_POST['password']);
-		$fullname   = mysqli_real_escape_string($connection,$_POST['fullname']);
-        $query = "SELECT email FROM users where email='".$email."'";
-        $result = mysqli_query($connection,$query);
-        $numResults = mysqli_num_rows($result);
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) // Validate email address
-        {
-            $message =  "Invalid email address please type a valid email!!";
-        }
-        elseif($numResults>=1)
-        {
-            $message = $email." Email already exist!!";
-			$_SESSION['pesan']='REGISTRASI GAGAL, EMAIL SUDAH TERDAFTAR';
-        }
-        else
-        {
-            mysqli_query($connection,"insert into users(username,email,password,fullname) values('".$name."','".$email."','".md5($password)."','".$fullname."')");
-            $message = "Signup Sucessfully!!";
-			$_SESSION['pesan']='REGISTRASI ANDA BERHASIL, SILAHKAN LOGIN';
-        }
     }
 }
  
@@ -107,7 +82,7 @@ if(isset($_POST['action']))
 			?></h2>
 			<form action="#" method="post">
 				<div class="form-sub-w3">
-					<input type="text" name="no_ba" placeholder="User ID / Nomor BA " required />
+					<input type="text" name="username" placeholder="Username " required />
 				<div class="icon-w3">
 					<i class="fa fa-user" aria-hidden="true"></i>
 				</div>

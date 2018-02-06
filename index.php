@@ -82,8 +82,12 @@
 			<nav id="nav-menu-container">
 				<ul class="nav-menu">
 				  <li class="menu-active"><a href="./index.php">Beranda</a></li>
-				  <li><a href="./tampilanggota.php">Lihat Anggota</a></li>
-				  <li><a href="./tambahanggota.php">Tambah Anggota</a></li>
+				  <li class="menu-has-children"><a href="#">Menu</a>
+					<ul>
+					  <li><a href="./tambahsimpanan.php">Tambah Data Simpanan</a></li>
+					  <li><a href="./tambahanggota.php">Tambah Anggota</a></li>
+					</ul>
+				  </li>
 				  <li><a href="./logout.php">Logout</a></li>
 				</ul>
 			  </nav>
