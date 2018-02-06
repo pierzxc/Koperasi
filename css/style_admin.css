@@ -121,12 +121,14 @@ select#soflow-color {
 
 td {
 	color: white;
+	height: 50px;
+}
+
+.labeldata{
+	margin-left:23px;
 }
 
 
-#connn {
-	margin-left: 23px;
-}
 
 #responsecontainer {
 	width: 100px;

@@ -22,49 +22,19 @@ $pekerjaan = '';
 if( isset($_SESSION['no_ba'])!="" ){
 	  $no_ba = $_SESSION['no_ba'];
 }
-$strSQL = mysqli_query($connection,"select * from users where no_ba='".$no_ba."' ");
-if (!$strSQL) {
-	printf("Error: %s\n", mysqli_error($connection));
-	exit();
-}
-if(mysqli_num_rows($strSQL) > 0)
-{
-	while($row = mysqli_fetch_assoc($strSQL)) {
-		$email = $row['email'];
-		$fullname = $row['fullname'];
-		$no_ba =  $row['no_ba'];
-		$tempat_lahir =  $row['tempat_lahir'];
-		$alamat =  $row['alamat'];
-		$kota =  $row['kota'];
-		$no_ktp =  $row['no_ktp'];
-		$telepon =  $row['telepon'];
-		$pekerjaan =  $row['pekerjaan'];
-	}
-}
 if(isset($_POST['action']))
 {          
 
     if($_POST['action']=="simpan")
     {
-		$email = mysqli_real_escape_string($connection,$_POST['email']);
-		$fullname = mysqli_real_escape_string($connection,$_POST['fullname']);
-		$tempat_lahir =  mysqli_real_escape_string($connection,$_POST['tempat_lahir']);
-		$alamat =  mysqli_real_escape_string($connection,$_POST['alamat']);
-		$kota =  mysqli_real_escape_string($connection,$_POST['kota']);
-		$no_ktp =  mysqli_real_escape_string($connection,$_POST['no_ktp']);
-		$telepon =  mysqli_real_escape_string($connection,$_POST['telepon']);
-		$pekerjaan =  mysqli_real_escape_string($connection,$_POST['pekerjaan']);
+		$no_ba = mysqli_real_escape_string($connection,$_POST['owner']);
+		$simpanan_wajib = mysqli_real_escape_string($connection,$_POST['simpanan_wajib']);
+		$simpanan_sukarela =  mysqli_real_escape_string($connection,$_POST['simpanan_sukarela']);
+		$penarikan =  mysqli_real_escape_string($connection,$_POST['penarikan']);
 		
-        $query = 	"UPDATE users 
-					SET email='".$email."',
-					fullname='".$fullname."',
-					tempat_lahir='".$tempat_lahir."',
-					alamat='".$alamat."',
-					kota='".$kota."',
-					no_ktp='".$no_ktp."',
-					telepon='".$telepon."',
-					pekerjaan='".$pekerjaan."'
-					WHERE no_ba='".$no_ba."'";
+		  
+        $query = 	"insert into simpanan(no_ba,simpanan_wajib,simpanan_sukarela,penarikan)
+					values('".$no_ba."','".$simpanan_wajib."','".$simpanan_sukarela."','".$penarikan."')";
 					
         $strSQL = mysqli_query($connection, $query);
         if (!$strSQL) {
@@ -73,8 +43,12 @@ if(isset($_POST['action']))
 		}
 		else
 		{
-			header("Location:profil.php");
-			exit();
+			echo "<script>
+			alert('Data Berhasil Disimpan');
+			</script>";
+			//header("Location:tambahsimpanan.php");
+			//exit();
+			
 		}
 		       
     }
@@ -118,25 +92,41 @@ if(isset($_POST['action']))
 			<h2><?php
 				echo $_SESSION['pesan'];
 			?></h2>
-			<form action="#" method="post">
+			<form action="#" method="post" id="formtambah">
 				
 				<div class="form-sub-w3">
 					<table style="width:60%; padding:20px;">
 						<tr>
 							<td>Nomor BA</td>
-							<td>: <select onchange="onSelectedNoBa()" name="owner" id="soflow">
+							<td>: <select onchange="onSelectedNoBa()" name="owner" id="soflow" form="formtambah">
 								<option value="" disabled selected>Pilih</option>
 								<?php 
 								$sql = mysqli_query($connection, "SELECT no_ba FROM users where role='anggota'");
 								while ($row = $sql->fetch_assoc()){
-								echo "<option value=\"owner1\">" . $row['no_ba'] . "</option>";
+								echo "<option value=" . $row['no_ba'] . ">" . $row['no_ba'] . "</option>";
 								}
 								?>
 							</select></td>
 						</tr>
 						<tr>
-							<td>Nama Lengkap</td>
-							<td>:<p style="display:inline" id="connn"></p></td>
+							<td>Nama Anggota</td>
+							<td>:<p style="display:inline" class="labeldata" id="nama"></p></td>
+						</tr>
+						<tr>
+							<td>Alamat</td>
+							<td>:<p style="display:inline" class="labeldata" id="alamat"></p></td>
+						</tr>
+						<tr>
+							<td>Simpanan Wajib</td>
+							<td>:<p style="display:inline" class="labeldata">Rp.</p><input style="width:150px;" type="text" name="simpanan_wajib" required /></td>
+						</tr>
+						<tr>
+							<td>Simpanan Sukarela</td>
+							<td>:<p style="display:inline" class="labeldata">Rp.</p><input style="width:150px;" type="text" name="simpanan_sukarela" required /></td>
+						</tr>
+						<tr>
+							<td>Penarikan</td>
+							<td>:<p style="display:inline" class="labeldata">Rp.</p><input style="width:150px;" type="text" name="penarikan" required /></td>
 						</tr>
 					</table>
 					
@@ -148,7 +138,7 @@ if(isset($_POST['action']))
 					<input name="action" type="hidden" value="simpan" />
 					<input type="submit" value="Simpan">
 				</div>
-				<p class="p-bottom-w3ls"><a  href="./profil.php">Batal</a></p>
+				<p class="p-bottom-w3ls"><a  href="./index.php">Batal</a></p>
 			</form>
 		</div>
 <!--//form-ends-here-->

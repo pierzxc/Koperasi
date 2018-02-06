@@ -27,7 +27,8 @@ function onSelectedNoBa()
         url: "api/getUserByNoBa.php?no_ba="+conceptName,	
         dataType: "json",   //expect html to be returned                
         success: function(response){                    
-            $("#connn").text(response[0].fullname);; 
+            $("#nama").text(response[0].fullname); 
+			$("#alamat").text(response[0].alamat);
             //alert(response);
         }
 
