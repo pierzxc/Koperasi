@@ -20,7 +20,14 @@ $telepon = '';
 $pekerjaan = '';
 $nama_wali = '';
 $motivasi = '';
-
+if( isset($_SESSION['role'])!="" ){
+	if($_SESSION['role']!="admin")
+	  header("Location:adminlogin.php");
+}
+else
+{
+	header("Location:adminlogin.php");
+}
 if(isset($_POST['action']))
 {          
 

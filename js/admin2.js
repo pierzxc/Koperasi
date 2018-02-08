@@ -23,12 +23,15 @@ function onSelectedNoBa()
 {
 	var conceptName = $('#soflow').find(":selected").text();
 	$.ajax({    //create an ajax request to display.php
-        type: "POST",
+        type: "GET",
         url: "api/getUserByNoBa.php?no_ba="+conceptName,	
         dataType: "json",   //expect html to be returned                
         success: function(response){                    
             $("#nama").text(response[0].fullname); 
 			$("#alamat").text(response[0].alamat);
+			var simpanan_wajib = (response[0].simpanan_wajib).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+			$("#saldo").text("Rp. "+simpanan_wajib);
+			
             //alert(response);
         }
 

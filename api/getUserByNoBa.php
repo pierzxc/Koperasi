@@ -9,6 +9,7 @@ if(mysqli_num_rows($strSQL) > 0)
 {
 	while($row = mysqli_fetch_assoc($strSQL)) {
 		$row_array['fullname'] = $row['fullname'];
+		$row_array['simpanan_wajib'] = $row['simpanan_wajib'];
 		$row_array['alamat'] =  $row['alamat'];
 		array_push($return_arr,$row_array);
 	}

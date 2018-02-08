@@ -3,7 +3,8 @@
 	include('dbconnect.php');
 	$fullname = '';
 	$no_ba = '';
-	$saldo = 0;
+	$simpanan_wajib = 0;
+	$simpanan_sukarela = 0;
 	$pinjaman = 0;
 	$email = '';
 	
@@ -22,6 +23,14 @@
 	  $no_ba = $_SESSION['no_ba'];
 	}
 	
+	if( isset($_SESSION['role'])!="" ){
+		if($_SESSION['role']!="anggota")
+		  header("Location:login.php");
+	}
+	else
+	{
+		header("Location:login.php");
+	}
 	$strSQL = mysqli_query($connection,"select * from users where no_ba='".$no_ba."' ");
 	if (!$strSQL) {
 		printf("Error: %s\n", mysqli_error($connection));
@@ -30,7 +39,8 @@
 	if(mysqli_num_rows($strSQL) > 0)
 	{
 		while($row = mysqli_fetch_assoc($strSQL)) {
-			$saldo = $row['saldo'];
+			$simpanan_wajib = $row['simpanan_wajib'];
+			$simpanan_sukarela = $row['simpanan_sukarela'];
 			$pinjaman = $row['pinjaman'];
 			$email = $row['email'];
 			$fullname = $row['fullname'];
@@ -183,22 +193,30 @@
 				<td>Pekerjaan</td>
 				<td>: <?php echo $pekerjaan; ?></td>
 			</tr>
-			<tr>
+			 <!--==========================
+				Intro Section
+				<tr>
 				<td>Nama Istri/Suami</td>
 				<td>: <?php echo $nama_wali; ?></td>
-			</tr>
-			<tr>
-				<td>Motivasi Menjadi Anggota</td>
-				<td>: <?php echo $motivasi; ?></td>
-			</tr>
-			<tr>
-				<td>Diperkenalkan Oleh</td>
-				<td>: <?php echo $referal; ?></td>
-			</tr>
+				</tr>
+				<tr>
+					<td>Motivasi Menjadi Anggota</td>
+					<td>: <?php echo $motivasi; ?></td>
+				</tr>
+				<tr>
+					<td>Diperkenalkan Oleh</td>
+					<td>: <?php echo $referal; ?></td>
+				</tr>
+			  ============================-->
+			
 			
 			<tr>
-				<td>Jumlah Saldo</td>
-				<td>: <?php echo 'Rp. ' . number_format( $saldo, 0 , '' , ',' ); ?></td>
+				<td>Simpanan Wajib</td>
+				<td>: <?php echo 'Rp. ' . number_format( $simpanan_wajib, 0 , '' , ',' ); ?></td>
+			</tr>
+			<tr>
+				<td>Simpanan Sukarela</td>
+				<td>: <?php echo 'Rp. ' . number_format( $simpanan_sukarela, 0 , '' , ',' ); ?></td>
 			</tr>
 			<tr>
 				<td>Jumlah Pinjaman</td>

@@ -22,6 +22,17 @@ $pekerjaan = '';
 if( isset($_SESSION['no_ba'])!="" ){
 	  $no_ba = $_SESSION['no_ba'];
 }
+
+if( isset($_SESSION['role'])!="" ){
+	if($_SESSION['role']!="anggota")
+	  header("Location:login.php");
+}
+else
+{
+	header("Location:login.php");
+}
+	
+	
 $strSQL = mysqli_query($connection,"select * from users where no_ba='".$no_ba."' ");
 if (!$strSQL) {
 	printf("Error: %s\n", mysqli_error($connection));

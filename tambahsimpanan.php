@@ -18,9 +18,18 @@ $kota = '';
 $no_ktp = '';
 $telepon = '';
 $pekerjaan = '';
-
+$saldo = 0;
 if( isset($_SESSION['no_ba'])!="" ){
 	  $no_ba = $_SESSION['no_ba'];
+}
+
+if( isset($_SESSION['role'])!="" ){
+	if($_SESSION['role']!="admin")
+	  header("Location:adminlogin.php");
+}
+else
+{
+	header("Location:adminlogin.php");
 }
 if(isset($_POST['action']))
 {          
@@ -32,23 +41,45 @@ if(isset($_POST['action']))
 		$simpanan_sukarela =  mysqli_real_escape_string($connection,$_POST['simpanan_sukarela']);
 		$penarikan =  mysqli_real_escape_string($connection,$_POST['penarikan']);
 		
-		  
-        $query = 	"insert into simpanan(no_ba,simpanan_wajib,simpanan_sukarela,penarikan)
-					values('".$no_ba."','".$simpanan_wajib."','".$simpanan_sukarela."','".$penarikan."')";
+		$strSQL = mysqli_query($connection,"select * from users where no_ba='".$no_ba."' and role='anggota' ");
+
+		if(mysqli_num_rows($strSQL) > 0)
+		{
+			while($row = mysqli_fetch_assoc($strSQL)) {
+				$saldo = floatval($row['simpanan_wajib']);
+			}
+		}
+
+		if(floatval($penarikan)<$saldo)
+		{
+			$query = 	"insert into simpanan(no_ba,simpanan_wajib,simpanan_sukarela,penarikan)
+					values('".$no_ba."','".$simpanan_wajib."','".$simpanan_sukarela."','".$penarikan."');";
 					
-        $strSQL = mysqli_query($connection, $query);
-        if (!$strSQL) {
-			printf("Error: %s\n", mysqli_error($connection));
-			exit();
+			$query .= 	"update users set 
+						simpanan_wajib = simpanan_wajib + ".$simpanan_wajib.",  
+						simpanan_wajib = simpanan_wajib - ".$penarikan.",  
+						simpanan_sukarela = simpanan_sukarela + ".$simpanan_sukarela."
+						where no_ba = ".$no_ba."";			
+			
+			$strSQL = mysqli_multi_query ( $connection , $query );
+		   // $strSQL = mysqli_query($connection, $query);
+			if (!$strSQL) {
+				//printf("Error: %s\n", mysqli_error($connection));
+				//exit();
+			}
+			else
+			{
+			//	echo "<script>
+			//	alert('Data Berhasil Disimpan');
+			//	</script>";
+				header("Location:tambahsimpanan.php?status=success");
+				//exit();
+				
+			}
 		}
 		else
 		{
-			echo "<script>
-			alert('Data Berhasil Disimpan');
-			</script>";
-			//header("Location:tambahsimpanan.php");
-			//exit();
-			
+			header("Location:tambahsimpanan.php?status=saldokurang");
 		}
 		       
     }
@@ -93,8 +124,27 @@ if(isset($_POST['action']))
 				echo $_SESSION['pesan'];
 			?></h2>
 			<form action="#" method="post" id="formtambah">
-				
+				 <?php
+					if( isset($_GET['status'])!="" ){
+						if($_GET['status']=="success")
+							echo "
+								<div class=\"alert\">
+								  <span class=\"closebtn\" onclick=\"this.parentElement.style.display='none';\">&times;</span>
+								  Data berhasil disimpan
+								</div>
+							";
+						if($_GET['status']=="saldokurang")
+							echo "
+								<div class=\"alertnegative\">
+								  <span class=\"closebtn\" onclick=\"this.parentElement.style.display='none';\">&times;</span>
+								  Saldo Tidak Mencukupi
+								</div>
+							";
+					}
+					
+				?>
 				<div class="form-sub-w3">
+				
 					<table style="width:60%; padding:20px;">
 						<tr>
 							<td>Nomor BA</td>
@@ -117,34 +167,69 @@ if(isset($_POST['action']))
 							<td>:<p style="display:inline" class="labeldata" id="alamat"></p></td>
 						</tr>
 						<tr>
+							<td>Saldo</td>
+							<td>:<p style="display:inline" class="labeldata" id="saldo"></p></td>
+						</tr>
+						<tr>
 							<td>Simpanan Wajib</td>
-							<td>:<p style="display:inline" class="labeldata">Rp.</p><input style="width:150px;" type="text" name="simpanan_wajib" required /></td>
+							<td>:<p style="display:inline" class="labeldata">Rp.</p><input style="width:150px;" type="text" value="0" name="simpanan_wajib" required /></td>
 						</tr>
 						<tr>
 							<td>Simpanan Sukarela</td>
-							<td>:<p style="display:inline" class="labeldata">Rp.</p><input style="width:150px;" type="text" name="simpanan_sukarela" required /></td>
+							<td>:<p style="display:inline" class="labeldata">Rp.</p><input style="width:150px;" type="text" value="0" name="simpanan_sukarela" required /></td>
 						</tr>
 						<tr>
 							<td>Penarikan</td>
-							<td>:<p style="display:inline" class="labeldata">Rp.</p><input style="width:150px;" type="text" name="penarikan" required /></td>
+							<td>:<p style="display:inline" class="labeldata">Rp.</p><input style="width:150px;" type="text" value="0" name="penarikan" required /></td>
 						</tr>
 					</table>
 					
 
 				</div>
 				
+				<style>
+					.alert {
+						padding: 20px;
+						background-color: #77f442; /* Red */
+						color: black;
+						margin-bottom: 15px;
+					}
+					.alertnegative{
+						padding: 20px;
+						background-color: red; /* Red */
+						color: white;
+						margin-bottom: 15px;
+					}
+					/* The close button */
+					.closebtn {
+						margin-left: 15px;
+						color: black;
+						font-weight: bold;
+						float: right;
+						font-size: 22px;
+						line-height: 20px;
+						cursor: pointer;
+						transition: 0.3s;
+					}
+
+					/* When moving the mouse over the close button */
+					.closebtn:hover {
+						color: white;
+					} 
+				</style>
+				
 				
 				<div class="submit-w3l">
 					<input name="action" type="hidden" value="simpan" />
 					<input type="submit" value="Simpan">
 				</div>
-				<p class="p-bottom-w3ls"><a  href="./index.php">Batal</a></p>
+				<p class="p-bottom-w3ls"><a  href="./index.php">Kembali</a></p>
 			</form>
 		</div>
 <!--//form-ends-here-->
 </div>
 
-	<script type="text/javascript" src="js/admin.js"></script>
+	<script type="text/javascript" src="js/admin2.js"></script>
 <!-- copyright -->
 	
 	<!-- //copyright --> 

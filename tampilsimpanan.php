@@ -22,6 +22,15 @@
 	  $no_ba = $_SESSION['no_ba'];
 	}
 	
+	if( isset($_SESSION['role'])!="" ){
+		if($_SESSION['role']!="admin")
+		  header("Location:adminlogin.php");
+	}
+	else
+	{
+		header("Location:adminlogin.php");
+	}
+
 	$strSQL = mysqli_query($connection,"select * from users where no_ba='".$no_ba."' ");
 	if (!$strSQL) {
 		printf("Error: %s\n", mysqli_error($connection));
@@ -105,13 +114,13 @@
   </script>
 </head>
 
-<body>
+<body style="background: linear-gradient(45deg, #1de099, #1dc8cd);">
 
   <!--==========================
     Header
   ============================-->
   <header id="header">
-    <div class="container">
+    <div class="container" >
 
       <div id="logo" class="pull-left">
         <h1><a href="#intro" class="scrollto">Koperasi</a></h1>
@@ -136,12 +145,12 @@
   <!--==========================
     Intro Section
   ============================-->
-  <section id="intro">
+  <section id="intro" style="background-color: rgba(0, 0, 0, 0.0);" >
 
     <div class="intro-text">
      <div class="profiletitle">Data Simpanan</div>
     </div>
-	<div class="datauser" style="height:500px;">
+	<div class="datauser" >
 		<table style="width:40%; padding:20px;">
 			<tr>
 				<td>Nomor BA</td>
@@ -175,7 +184,7 @@
   <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
 
   <!-- JavaScript Libraries -->
-  <script type="text/javascript" src="js/admin.js"></script>
+  <script type="text/javascript" src="js/admin2.js"></script>
   <script src="lib/jquery/jquery.min.js"></script>
   <script src="lib/jquery/jquery-migrate.min.js"></script>
   <script src="lib/bootstrap/js/bootstrap.bundle.min.js"></script>
