@@ -86,6 +86,7 @@
 					<ul>
 					  <li><a href="./tampilsimpanan.php">Tampil Data Simpanan</a></li>
 					  <li><a href="./tambahsimpanan.php">Tambah Data Simpanan</a></li>
+					  <li><a href="./tambahpinjaman.php">Tambah Data Pinjaman</a></li>
 					  <li><a href="./tambahanggota.php">Tambah Anggota</a></li>
 					</ul>
 				  </li>

@@ -8,7 +8,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 <?php
 session_start();
 include('dbconnect.php');
-$_SESSION['pesan']='Tambah Data Simpanan';
+$_SESSION['pesan']='Tambah Data Pinjaman';
 $no_ba = '';
 $fullname = '';
 $email = '';
@@ -19,6 +19,7 @@ $no_ktp = '';
 $telepon = '';
 $pekerjaan = '';
 $saldo = 0;
+$fee = 0;
 if( isset($_SESSION['no_ba'])!="" ){
 	  $no_ba = $_SESSION['no_ba'];
 }
@@ -31,15 +32,25 @@ else
 {
 	header("Location:adminlogin.php");
 }
+$strSQL = mysqli_query($connection,"select * from config");
+
+if(mysqli_num_rows($strSQL) > 0)
+{
+	while($row = mysqli_fetch_assoc($strSQL)) {
+		$fee = floatval($row['fee'])*100;
+	}
+}
 if(isset($_POST['action']))
 {          
 
     if($_POST['action']=="simpan")
     {
 		$no_ba = mysqli_real_escape_string($connection,$_POST['owner']);
-		$simpanan_wajib = mysqli_real_escape_string($connection,$_POST['simpanan_wajib']);
-		$simpanan_sukarela =  mysqli_real_escape_string($connection,$_POST['simpanan_sukarela']);
-		$penarikan =  mysqli_real_escape_string($connection,$_POST['penarikan']);
+		$besar_pinjaman = mysqli_real_escape_string($connection,$_POST['besar_pinjaman']);
+		$jangka_waktu =  mysqli_real_escape_string($connection,$_POST['jangka_waktu']);
+		$maksud_pinjaman =  mysqli_real_escape_string($connection,$_POST['maksud_pinjaman']);
+		$besar_angsuran =  mysqli_real_escape_string($connection,$_POST['besar_angsuran']);
+		$total_fee =  mysqli_real_escape_string($connection,$_POST['fee']);
 		
 		$strSQL = mysqli_query($connection,"select * from users where no_ba='".$no_ba."' and role='anggota' ");
 
@@ -49,20 +60,20 @@ if(isset($_POST['action']))
 				$saldo = floatval($row['simpanan_wajib']);
 			}
 		}
+		
 
-		if(floatval($penarikan)<$saldo)
-		{
-			$query = 	"insert into simpanan(no_ba,simpanan_wajib,simpanan_sukarela,penarikan)
-					values('".$no_ba."','".$simpanan_wajib."','".$simpanan_sukarela."','".$penarikan."');";
+		
+			$query = 	"insert into pinjaman(no_ba,besar_pinjaman,jangka_waktu,maksud_pinjaman,besar_angsuran,total_fee)
+						values('".$no_ba."','".$besar_pinjaman."','".$jangka_waktu."','".$maksud_pinjaman."','".$besar_angsuran."','".$total_fee."')";
 					
-			$query .= 	"update users set 
+			/*$query .= 	"update users set 
 						simpanan_wajib = simpanan_wajib + ".$simpanan_wajib.",  
 						simpanan_wajib = simpanan_wajib - ".$penarikan.",  
 						simpanan_sukarela = simpanan_sukarela + ".$simpanan_sukarela."
-						where no_ba = ".$no_ba."";			
+						where no_ba = ".$no_ba."";	*/		
 			
-			$strSQL = mysqli_multi_query ( $connection , $query );
-		   // $strSQL = mysqli_query($connection, $query);
+			//$strSQL = mysqli_multi_query ( $connection , $query );
+		    $strSQL = mysqli_query($connection, $query);
 			if (!$strSQL) {
 				//printf("Error: %s\n", mysqli_error($connection));
 				//exit();
@@ -72,15 +83,12 @@ if(isset($_POST['action']))
 			//	echo "<script>
 			//	alert('Data Berhasil Disimpan');
 			//	</script>";
-				header("Location:tambahsimpanan.php?status=success");
+				header("Location:tambahpinjaman.php?status=success");
 				//exit();
 				
 			}
-		}
-		else
-		{
-			header("Location:tambahsimpanan.php?status=saldokurang");
-		}
+		
+		
 		       
     }
     
@@ -92,7 +100,7 @@ if(isset($_POST['action']))
 <!DOCTYPE html>
 <html>
 <head>
-<title>Tambah Data Simpanan</title>
+<title>Tambah Data Pinjaman</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="keywords" content="Credit Login / Register Form Responsive Widget,Login form widgets, Sign up Web forms , Login signup Responsive web form,Flat Pricing table,Flat Drop downs,Registration Forms,News letter Forms,Elements" />
@@ -145,7 +153,7 @@ if(isset($_POST['action']))
 				?>
 				<div class="form-sub-w3">
 				
-					<table style="width:60%; padding:20px;">
+					<table style="width:80%; padding:20px;">
 						<tr>
 							<td>Nomor BA</td>
 							<td>: <select onchange="onSelectedNoBa()" name="owner" id="soflow" form="formtambah" required>
@@ -166,21 +174,36 @@ if(isset($_POST['action']))
 							<td>Alamat</td>
 							<td>:<p style="display:inline" class="labeldata" id="alamat">-</p></td>
 						</tr>
+						
 						<tr>
-							<td>Saldo</td>
-							<td>:<p style="display:inline" class="labeldata" id="saldo">-</p></td>
+							<td>Besar Pinjaman</td>
+							<td>:<p style="display:inline" class="labeldata">Rp.</p><input onchange="onChangeText()" onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" id="besar_pinjaman" style="width:150px;" type="text" value="0" name="besar_pinjaman" required /></td>
 						</tr>
 						<tr>
-							<td>Simpanan Wajib</td>
-							<td>:<p style="display:inline" class="labeldata">Rp.</p><input style="width:150px;" type="text" value="0" name="simpanan_wajib" required /></td>
+							<td>Jangka Waktu</td>
+							<td>:<input class="labeldata" style="width:40px;" type="number" value="0" name="jangka_waktu" required /><p style="display:inline; margin-left:10px;" >Bulan</p></td>
 						</tr>
 						<tr>
-							<td>Simpanan Sukarela</td>
-							<td>:<p style="display:inline" class="labeldata">Rp.</p><input style="width:150px;" type="text" value="0" name="simpanan_sukarela" required /></td>
+							<td>Maksud Pinjaman</td>
+							<td>:<input class="labeldata" style="width:600px;" type="text" name="maksud_pinjaman" required /></td>
 						</tr>
 						<tr>
-							<td>Penarikan</td>
-							<td>:<p style="display:inline" class="labeldata">Rp.</p><input style="width:150px;" type="text" value="0" name="penarikan" required /></td>
+							<td>Besar Angsuran</td>
+							<td>:<p style="display:inline" class="labeldata">Rp.</p><input  style="width:150px;" type="text" value="0" name="besar_angsuran" required /></td>
+						</tr>
+						<script>
+							
+							function onChangeText()
+							{
+								var fee = "<?php echo $fee; ?>";
+								var besar_pinjaman = $("#besar_pinjaman").val();
+								var total_fee = (fee*besar_pinjaman)/100;
+								$("#fee").val(total_fee);
+							}
+						</script>
+						<tr>
+							<td>Fee <?php echo $fee?>%</td>
+							<td>:<p style="display:inline" class="labeldata">Rp.</p><input readonly="readonly" id="fee" style="width:150px;" type="text" value="0" name="fee" required /></td>
 						</tr>
 					</table>
 					
